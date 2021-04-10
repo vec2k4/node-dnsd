@@ -1,17 +1,17 @@
-# dnsd: DNS encoder, decoder, and server
+# node-dnsd: DNS encoder, decoder, and server
 
-*dnsd* is a Node.js package for working with DNS. It converts binary DNS messages to and from convenient JavaScript objects; and it provides a server API, for running a custom name server.
+*node-dnsd* is a Node.js package for working with DNS. It converts binary DNS messages to and from convenient JavaScript objects; and it provides a server API, for running a custom name server.
 
-*dnsd* is available as an npm module.
+*node-dnsd* is available as an npm module.
 
-    $ npm install dnsd
+    $ npm install node-dnsd
 
 ## Example: Running a server
 
 This simple DNS server responds with an "A" (address) record of `1.2.3.4` for every request.
 
 ```javascript
-var dnsd = require('dnsd')
+var dnsd = require('node-dnsd')
 dnsd.createServer(function(req, res) {
   res.end('1.2.3.4')
 }).listen(5353, '127.0.0.1')
@@ -44,7 +44,7 @@ Now test your server:
 This example logs all requests. For address (A) queries, it returns two records, with a random TTL, and the final octet of the IP address is the length of the hostname queried.
 
 ```javascript
-var dnsd = require('dnsd')
+var dnsd = require('node-dnsd')
 
 var server = dnsd.createServer(handler)
 server.zone('example.com', 'ns1.example.com', 'us@example.com', 'now', '2h', '30m', '2w', '10m')
@@ -130,24 +130,24 @@ This is an example if you need to route your mail server with an MX record.
 // To test:
 // 1. Run this program
 // 2. dig @localhost -p 5353 example.com mx
- 
-var dnsd = require('dnsd')
- 
+
+var dnsd = require('node-dnsd')
+
 var server = dnsd.createServer(handler)
 server.zone('example.com', 'ns1.example.com', 'us@example.com', 'now', '2h', '30m', '2w', '10m')
 server.listen(5353, '127.0.0.1')
 console.log('Listening at 127.0.0.1:5353')
- 
+
 function handler(req, res) {
   var question = res.question && res.question[0]
- 
+
   if(question.type != 'MX')
     return res.end()
- 
+
   console.log('MX lookup for domain: %s', question.name)
   res.answer.push({'name':question.name, 'type':'MX', 'data':[10, 'mail.example.com']})
   res.answer.push({'name':question.name, 'type':'MX', 'data':[20, 'mail.backupexample.com']})
-  
+
   return res.end()
 }
 ```
@@ -163,7 +163,7 @@ See http://support.google.com/a/bin/answer.py?hl=en&answer=140034 for more info 
 
 ```javascript
 var fs = require('fs')
-var dnsd = require('dnsd')
+var dnsd = require('node-dnsd')
 
 var msg_file = require.resolve('dnsd/_test_data/registry.npmjs.org-response')
   , msg_data = fs.readFileSync(msg_file)
@@ -207,7 +207,7 @@ Output
 ## Example: Encode a message
 
 ```javascript
-var dnsd = require('dnsd')
+var dnsd = require('node-dnsd')
 
 var questions = [ {name:'example.com', class:'IN', type:'TXT'} ]
   , message = {type:'query', id:123, opcode:'query', recursion_desired:true, question:questions}
@@ -244,7 +244,7 @@ Round trip:
 `dnsd` is [defaultable][def]. The option `convenient` (`true` by default) adds convenience code when running a server.  Convenience mode adds several features, mostly to build standards-compliant name servers.
 
 ```javascript
-var dnsd_easy = require('dnsd')
+var dnsd_easy = require('node-dnsd')
 var dnsd_hard = dnsd_easy.defaults({convenient: false})
 ```
 
